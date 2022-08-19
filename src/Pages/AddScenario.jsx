@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
-  Button,
   Container,
   Flex,
   FormControl,
@@ -9,7 +8,25 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
+import { BlueButton, GreenButton, OrangeButton } from "../Components/Buttons";
+import { SaveData } from "../utils/LocalStorage";
+
 export const AddScenario = () => {
+  const [data, setData] = useState([]);
+  const [scenarioData, setScenarioData] = useState({
+    id:1,
+    name: "",
+    time: "",
+  });
+  const handleChange = (e) => {
+    setScenarioData({ ...scenarioData, [e.target.name]: e.target.value });
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setData([...data, scenarioData]);
+    SaveData("scenarioData", data);
+  };
+
   return (
     <Container maxWidth="70%">
       <Box mt="10">
@@ -17,56 +34,58 @@ export const AddScenario = () => {
           Add Scenario
         </Text>
       </Box>
-      <Box
-        bg="rgba(41, 41, 57, 0.667)"
-        w="90%"
-        h="200px"
-        mt="20"
-        border="0.5px solid rgba(41, 41, 57, 0.667)"
-      >
-        <FormControl mt="50px">
-          <Flex m="auto" justifyContent="space-around">
+      l
+      <form onSubmit={handleSubmit} >
+        <Box
+          bg="rgba(41, 41, 57, 0.667)"
+          w="90%"
+          h="200px"
+          mt="20"
+          border="0.5px solid rgba(41, 41, 57, 0.667)"
+          
+        >
+          <Flex m="auto" justifyContent="space-around" mt={10}>
             <Box>
-              <FormLabel color="white">Scenario Name</FormLabel>
-              <Input
-                type="text"
-                w="280px"
-                rounded="sm"
-                width="auto"
-                color="white"
-                isRequired="true"
-                errorBorderColor="red.500"
-                pl="30px"
-              />
+              <FormControl>
+                <FormLabel color="white">Scenario Name</FormLabel>
+                <Input
+                  type="text"
+                  w="280px"
+                  rounded="sm"
+                  color="white"
+                  required={true}
+                  pl="30px"
+                  name="name"
+                  value={scenarioData.name}
+                  onChange={handleChange}
+                />
+              </FormControl>
             </Box>
             <Box>
-              <FormLabel color="white">Scenario Time (seconds)</FormLabel>
-              <Input
-                type="number"
-                rounded="sm"
-                isRequired="true"
-                w="280px"
-                color="white"
-                errorBorderColor="red.500"
-                pl="30px"
-              />
+              <FormControl>
+                <FormLabel color="white">Scenario Time (seconds)</FormLabel>
+                <Input
+                  type="number"
+                  rounded="sm"
+                  required={true}
+                  w="280px"
+                  color="white"
+                  pl="30px"
+                  name="time"
+                  value={scenarioData.time}
+                  onChange={handleChange}
+                />
+              </FormControl>
             </Box>
           </Flex>
-        </FormControl>
-      </Box>
-      <Box mt="20">
-        <Flex w="30%" justifyContent="space-between">
-          <Button bg="rgb(4,190,90)" color="white" rounded="sm" w="80px" colorScheme="green">
-            Add
-          </Button>
-          <Button bg="rgb(248,147,29)" color="white" rounded="sm" w="100px" colorScheme="orange">
-            Reset
-          </Button>
-          <Button bg="rgb(43,162,228)" color="white" rounded="sm" w="100px" colorScheme="blue">
-            Go Back
-          </Button>
-        </Flex>
-      </Box>
+        </Box>
+
+        <Box mt="10">
+          <GreenButton text="Add" type="submit" />
+          <OrangeButton text="Reset" />
+          <BlueButton text="Go Back" />
+        </Box>
+      </form>
     </Container>
   );
 };
