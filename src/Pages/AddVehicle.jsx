@@ -10,8 +10,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { BlueButton, GreenButton, OrangeButton } from "../Components/Buttons";
-import { SaveData } from "../utils/LocalStorage";
-
+import { GetData, SaveData } from "../utils/LocalStorage";
+import { v4 as uuidv4 } from "uuid";
 export const AddVehicle = () => {
   const directions = [
     "Select Direction",
@@ -20,28 +20,46 @@ export const AddVehicle = () => {
     "upwords",
     "Downwords",
   ];
-  const [data, setData] = useState([]);
   const [vehicleData, setVehicleData] = useState({
-    id: 1,
     scenario: "",
     name: "",
+    speed: "",
     positionX: "",
     positionY: "",
-    speed: "",
     direction: "",
   });
 
+  // const getVehicleData = GetData("vehicleData");
+  const getScenarioData = GetData("scenarioData");
   const handleChange = (e) => {
     setVehicleData({ ...vehicleData, [e.target.name]: e.target.value });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    setData([...data, vehicleData]);
-    SaveData("vehicleData", data);
-    console.log(data);
+    SaveData("vehicleData", { ...vehicleData, id: uuidv4() });
+    setVehicleData({
+      scenario: "",
+      name: "",
+      speed: "",
+      positionX: "",
+      positionY: "",
+      direction: "",
+    });
+  };
+
+  // reset the form data
+  const handleReset = () => {
+    setVehicleData({
+      scenario: "",
+      name: "",
+      speed: "",
+      positionX: "",
+      positionY: "",
+      direction: "",
+    });
   };
   return (
-    <Container maxWidth="70%" border="2px solid red">
+    <Container maxWidth="70%">
       <Box mt="10">
         <Text color="white" fontSize="24px">
           Add Vehicle
@@ -72,15 +90,18 @@ export const AddVehicle = () => {
                 name="scenario"
                 onChange={handleChange}
               >
-                <option value="option1" style={{ backgroundColor: "black" }}>
-                  Option 1
+                <option value="" style={{ backgroundColor: "black" }}>
+                  Select Scenario
                 </option>
-                <option value="option2" style={{ backgroundColor: "black" }}>
-                  Option 2
-                </option>
-                <option value="option3" style={{ backgroundColor: "black" }}>
-                  Option 3
-                </option>
+                {getScenarioData?.map((scenario, i) => (
+                  <option
+                    value={scenario.id}
+                    style={{ backgroundColor: "black" }}
+                    key={i}
+                  >
+                    {scenario.name}
+                  </option>
+                ))}
               </Select>
             </GridItem>
             <GridItem>
@@ -160,7 +181,7 @@ export const AddVehicle = () => {
         </Box>
         <Box mt="10">
           <GreenButton text="Add" type="submit" />
-          <OrangeButton text="Reset" />
+          <OrangeButton text="Reset" click={handleReset} />
           <BlueButton text="Go Back" />
         </Box>
       </form>

@@ -8,23 +8,23 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
+import { v4 as uuidv4 } from "uuid";
 import { BlueButton, GreenButton, OrangeButton } from "../Components/Buttons";
 import { SaveData } from "../utils/LocalStorage";
 
 export const AddScenario = () => {
-  const [data, setData] = useState([]);
-  const [scenarioData, setScenarioData] = useState({
-    id:1,
-    name: "",
-    time: "",
-  });
+  const [scenarioData, setScenarioData] = useState({ name: "", time: "" });
+
   const handleChange = (e) => {
     setScenarioData({ ...scenarioData, [e.target.name]: e.target.value });
   };
+
+  // save the data to local storage on submitting the form
   const handleSubmit = (e) => {
     e.preventDefault();
-    setData([...data, scenarioData]);
-    SaveData("scenarioData", data);
+    SaveData("scenarioData", { ...scenarioData, id: uuidv4() }); //saving to local storage
+    alert("scenario added"); // alert message for the user
+    setScenarioData({ name: "", time: "" }); //resetting the form data
   };
 
   return (
@@ -34,15 +34,14 @@ export const AddScenario = () => {
           Add Scenario
         </Text>
       </Box>
-      l
-      <form onSubmit={handleSubmit} >
+
+      <form onSubmit={handleSubmit}>
         <Box
           bg="rgba(41, 41, 57, 0.667)"
           w="90%"
           h="200px"
           mt="20"
           border="0.5px solid rgba(41, 41, 57, 0.667)"
-          
         >
           <Flex m="auto" justifyContent="space-around" mt={10}>
             <Box>
@@ -82,7 +81,10 @@ export const AddScenario = () => {
 
         <Box mt="10">
           <GreenButton text="Add" type="submit" />
-          <OrangeButton text="Reset" />
+          <OrangeButton
+            text="Reset"
+            click={() => setScenarioData({ name: "", time: "" })} // reset the form data
+          />
           <BlueButton text="Go Back" />
         </Box>
       </form>
