@@ -49,6 +49,10 @@ export const AllScenarios = () => {
     } else alert("No Data found");
   };
 
+  const handleEdit = (id) => {
+    localStorage.setItem("editScenarioId", id);
+  };
+
   React.useEffect(() => {
     setAllScenariosData(getAllScenarios());
   }, []);
@@ -95,7 +99,9 @@ export const AllScenarios = () => {
                   </Link>
                 </Td>
                 <Td textAlign="center">
-                  <EditIcon />
+                  <Link to="/add-scenario">
+                    <EditIcon onClick={() => handleEdit(data.id)} />
+                  </Link>
                 </Td>
                 <Td
                   textAlign="center"

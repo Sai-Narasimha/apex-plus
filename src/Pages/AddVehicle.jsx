@@ -15,10 +15,10 @@ import { v4 as uuidv4 } from "uuid";
 export const AddVehicle = () => {
   const directions = [
     "Select Direction",
-    "Towords",
-    "Backwords",
-    "upwords",
-    "Downwords",
+    "Towards",
+    "Backwards",
+    "Upwards",
+    "Downwards",
   ];
   const [vehicleData, setVehicleData] = useState({
     scenario: "",

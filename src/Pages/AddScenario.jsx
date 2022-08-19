@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Container,
@@ -11,9 +12,13 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { BlueButton, GreenButton, OrangeButton } from "../Components/Buttons";
 import { SaveData } from "../utils/LocalStorage";
+import { getAllScenarios } from "../utils/Function";
+import { useNavigate } from "react-router-dom";
 
 export const AddScenario = () => {
   const [scenarioData, setScenarioData] = useState({ name: "", time: "" });
+  const [isEdit, setIsEdit] = useState(false);
+  const naviage = useNavigate();
 
   const handleChange = (e) => {
     setScenarioData({ ...scenarioData, [e.target.name]: e.target.value });
@@ -27,15 +32,44 @@ export const AddScenario = () => {
     setScenarioData({ name: "", time: "" }); //resetting the form data
   };
 
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+
+    let editId = localStorage.getItem("editScenarioId");
+    let allScenarios = getAllScenarios();
+    let editedScenarios = allScenarios?.map(scenario => {
+      let id = scenario.id;
+      if(id === editId) return {...scenarioData, id  };
+      return scenario;
+    });
+    localStorage.setItem("scenarioData", JSON.stringify(editedScenarios)); //saving to local storage
+    setScenarioData({ name: "", time: "" });
+    localStorage.removeItem("editScenarioId");
+    alert("scenario edited"); // alert message for the user
+    naviage("/all-scenarios");
+  }
+
+  useEffect(() => {
+    let editId = localStorage.getItem("editScenarioId");
+    if(editId) {
+      setIsEdit(true);
+
+      let allScenarios = getAllScenarios();
+      let scenarioToEdit = allScenarios?.filter(scenario => scenario.id === editId)[0];
+      setScenarioData(scenarioToEdit);
+    }
+    else setIsEdit(false);
+  }, [])
+
   return (
     <Container maxWidth="70%">
       <Box mt="10">
         <Text color="white" fontSize="24px">
-          Add Scenario
+          {isEdit ? "Edit Scenario" : "Add Scenario"}
         </Text>
       </Box>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={isEdit ? handleEditSubmit : handleSubmit}>
         <Box
           bg="rgba(41, 41, 57, 0.667)"
           w="90%"
@@ -80,7 +114,7 @@ export const AddScenario = () => {
         </Box>
 
         <Box mt="10">
-          <GreenButton text="Add" type="submit" />
+          <GreenButton text={isEdit ? "Update" : "Add"} type="submit" />
           <OrangeButton
             text="Reset"
             click={() => setScenarioData({ name: "", time: "" })} // reset the form data

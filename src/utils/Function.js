@@ -6,4 +6,8 @@ const getAllScenarios = () => {
   return data;
 };
 
-export { getAllScenarios };
+const getAllVehicles = () => {
+  const data = GetData("vehicleData");
+  return data
+}
+export { getAllScenarios, getAllVehicles };
