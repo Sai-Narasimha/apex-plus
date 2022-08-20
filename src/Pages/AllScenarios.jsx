@@ -50,7 +50,8 @@ export const AllScenarios = () => {
   };
 
   const handleEdit = (id) => {
-    localStorage.setItem("editScenarioId", id);
+    localStorage.setItem("editScenarioId", id); //set the id of the item to be edited in local storage 
+    //user is redirected to /add-scenario page as link tag is given on the edit button
   };
 
   React.useEffect(() => {

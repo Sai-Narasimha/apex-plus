@@ -16,50 +16,59 @@ import { getAllScenarios } from "../utils/Function";
 import { useNavigate } from "react-router-dom";
 
 export const AddScenario = () => {
-  const [scenarioData, setScenarioData] = useState({ name: "", time: "" });
-  const [isEdit, setIsEdit] = useState(false);
+  const [formData, setFormData] = useState({ name: "", time: "" });
+  const [isEdit, setIsEdit] = useState(false); //tells if the form is being used to edit or add a scenairo
   const naviage = useNavigate();
 
   const handleChange = (e) => {
-    setScenarioData({ ...scenarioData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   // save the data to local storage on submitting the form
   const handleSubmit = (e) => {
     e.preventDefault();
-    SaveData("scenarioData", { ...scenarioData, id: uuidv4() }); //saving to local storage
+    SaveData("formData", { ...formData, id: uuidv4() }); //saving to local storage by adding an id
     alert("scenario added"); // alert message for the user
-    setScenarioData({ name: "", time: "" }); //resetting the form data
+    setFormData({ name: "", time: "" }); //resetting the form data
   };
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
 
-    let editId = localStorage.getItem("editScenarioId");
-    let allScenarios = getAllScenarios();
-    let editedScenarios = allScenarios?.map(scenario => {
-      let id = scenario.id;
-      if(id === editId) return {...scenarioData, id  };
-      return scenario;
+    let editId = localStorage.getItem("editScenarioId"); // getting editScenarioId from localStorage
+    let allScenarios = getAllScenarios(); // getting all Scenarios from LocalStorage
+
+    let editedScenarios = allScenarios?.map((scenario) => {
+      let id = scenario.id; //existing id of the scenario
+      
+      //if the scenario id === the editId in the local storage 
+      if (id === editId) return { ...formData, id }; //return updated form data and the same id of the scenario
+      return scenario; //else return the same scenario
     });
+
     localStorage.setItem("scenarioData", JSON.stringify(editedScenarios)); //saving to local storage
-    setScenarioData({ name: "", time: "" });
-    localStorage.removeItem("editScenarioId");
+    setFormData({ name: "", time: "" }); //resetting form data
+    localStorage.removeItem("editScenarioId"); //delted the edit scenario id from local storage
     alert("scenario edited"); // alert message for the user
     naviage("/all-scenarios");
-  }
+  };
 
   useEffect(() => {
     let editId = localStorage.getItem("editScenarioId");
-    if(editId) {
-      setIsEdit(true);
 
+    // if the edit id is present - the module servers the purpuose of editing a scenario
+    if (editId) {
+      setIsEdit(true);
       let allScenarios = getAllScenarios();
-      let scenarioToEdit = allScenarios?.filter(scenario => scenario.id === editId)[0];
-      setScenarioData(scenarioToEdit);
-    }
-    else setIsEdit(false);
-  }, [])
+
+      //retrieve the scenario to be edited from all  the scenarios
+      let scenarioToEdit = allScenarios?.filter(
+        (scenario) => scenario.id === editId
+      )[0];
+
+      setFormData(scenarioToEdit); //set the scenario to be edited in form data
+    } else setIsEdit(false); //if the edit id is absent - the modules serves teh purpuose of adding a scenario 
+  }, []);
 
   return (
     <Container maxWidth="70%">
@@ -89,7 +98,7 @@ export const AddScenario = () => {
                   required={true}
                   pl="30px"
                   name="name"
-                  value={scenarioData.name}
+                  value={formData.name}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -105,7 +114,7 @@ export const AddScenario = () => {
                   color="white"
                   pl="30px"
                   name="time"
-                  value={scenarioData.time}
+                  value={formData.time}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -117,7 +126,7 @@ export const AddScenario = () => {
           <GreenButton text={isEdit ? "Update" : "Add"} type="submit" />
           <OrangeButton
             text="Reset"
-            click={() => setScenarioData({ name: "", time: "" })} // reset the form data
+            click={() => setFormData({ name: "", time: "" })} // reset the form data
           />
           <BlueButton text="Go Back" />
         </Box>

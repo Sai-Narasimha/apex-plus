@@ -5,6 +5,7 @@ import { AddScenario } from "./AddScenario";
 import { AddVehicle } from "./AddVehicle";
 import { AllScenarios } from "./AllScenarios";
 import { Home } from "./Home";
+
 export const AllRoutes = () => {
   return (
     <div className="all_container_wrapper">

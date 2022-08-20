@@ -1,29 +1,99 @@
 .sidebar_wrapper {
   width: 15%;
-  height: 716px;
+  height: auto;
   background-color:lightgrey;
 }
 .links_container {
-  margin-top:10px;
+  margin-top: 10px;
 }
 .links_wrapper {
-  padding:7px;
-  padding-left:20px
-}
-.links_wrapper:hover{
-  background-color:rgb(248, 246, 246);
-  
+  padding: 7px;
+  padding-left: 20px;
 }
 .links_style {
   text-decoration: none;
   font-weight: 600;
   font-size: 18px;
-  color :black
 }
-.links_wrapper:hover .links_style{
-  color: skyblue
+.link_active{
+  color: rgb(43,162,228);
+  background-color: rgb(248, 246, 246);
 }
-.all_container_wrapper{
+.all_container_wrapper {
   display: flex;
-  background-color:rgb(15, 15, 30);
+  background-color: rgb(15, 15, 30);
+  height: 100%;
+  min-height: 100vh;
+}
+.graph-container {
+  width: 100%;
+  height: 50vh;
+  border: 1px solid white;
+  margin: 50px auto;
+}
+.vehicle-simulation{
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+.running {
+  animation-play-state: paused; 
+}
+.towards{
+  animation-name: towards;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+.backwards{
+  animation-name: backwards;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+.upwards{
+  animation-name: upwards;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+.downwards{
+  animation-name: downwards;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+.pause{
+  animation-play-state: paused; 
+}
+@keyframes towards {
+  from {
+    transform: translate(0px, 0px)
+  }
+  to {
+    transform: translate(1000px, 0px)
+  }
+}
+@keyframes backwards {
+  0% {
+    transform : translate(0px, 0px);
+  }
+  100% {
+    transform : translate(-1000px, 0px);
+  }
+}
+@keyframes upwards {
+  0% {
+    transform : translate(0px, 0px);
+  }
+  100% {
+    transform : translate(0px, -1000px);
+  }
+}
+@keyframes downwards {
+  0% {
+    transform : translate(0px, 0px);
+  }
+  100% {
+    transform : translate(0px, 1000px);
+  }
 }

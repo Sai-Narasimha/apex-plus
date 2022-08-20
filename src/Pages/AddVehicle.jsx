@@ -8,10 +8,12 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BlueButton, GreenButton, OrangeButton } from "../Components/Buttons";
 import { GetData, SaveData } from "../utils/LocalStorage";
 import { v4 as uuidv4 } from "uuid";
+import { getAllVehicles } from "../utils/Function";
+import { useNavigate } from "react-router-dom";
 export const AddVehicle = () => {
   const directions = [
     "Select Direction",
@@ -20,7 +22,9 @@ export const AddVehicle = () => {
     "Upwards",
     "Downwards",
   ];
-  const [vehicleData, setVehicleData] = useState({
+  const [isEdit, setIsEdit] = useState(false);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
     scenario: "",
     name: "",
     speed: "",
@@ -29,44 +33,77 @@ export const AddVehicle = () => {
     direction: "",
   });
 
-  // const getVehicleData = GetData("vehicleData");
   const getScenarioData = GetData("scenarioData");
   const handleChange = (e) => {
-    setVehicleData({ ...vehicleData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    SaveData("vehicleData", { ...vehicleData, id: uuidv4() });
-    setVehicleData({
-      scenario: "",
-      name: "",
-      speed: "",
-      positionX: "",
-      positionY: "",
-      direction: "",
-    });
+    SaveData("vehicleData", { ...formData, id: uuidv4() });
+    handleReset();
+    alert("Vehicle added")
   };
 
   // reset the form data
   const handleReset = () => {
-    setVehicleData({
+    setFormData({
       scenario: "",
       name: "",
       speed: "",
       positionX: "",
       positionY: "",
-      direction: "",
+      direction: ""
     });
   };
+
+  
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+
+    let editId = localStorage.getItem("editVehicleId"); // getting editVehicleId from localStorage
+    let allVehicleData = getAllVehicles(); // getting all vehicles from LocalStorage
+
+    let editVehicleData = allVehicleData?.map((vehicle) => {
+      let id = vehicle.id; //existing id of the vehicle
+
+      //if the vehicle id === the editId in the local storage
+      if (id === editId) return { ...formData, id }; //return updated form data and the same id of the vehicle
+      return vehicle; //else return the same vehicle
+    });
+
+    localStorage.setItem("vehicleData", JSON.stringify(editVehicleData)); //saving to local storage
+    handleReset(); //resetting form data
+    localStorage.removeItem("editVehicleId"); //delted the edit vehicle id from local storage
+    alert("vehicle edited"); // alert message for the user
+    navigate("/");
+  };
+
+  useEffect(() => {
+    let editId = localStorage.getItem("editVehicleId");
+
+    // if the edit id is present - the module servers the purpuose of editing a vehicle
+    if (editId) {
+      setIsEdit(true);
+      let allVehicles = getAllVehicles();
+
+      //retrieve the vehicle to be edited from all  the vehicles
+      let vehicleToEdit = allVehicles?.filter(
+        (vehicle) => vehicle.id === editId
+      )[0];
+
+      setFormData(vehicleToEdit); //set the vehicle to be edited in form data
+    } else setIsEdit(false); //if the edit id is absent - the modules serves teh purpuose of adding a vehicle
+  }, []);
+
   return (
     <Container maxWidth="70%">
       <Box mt="10">
         <Text color="white" fontSize="24px">
-          Add Vehicle
+          {isEdit ? "Edit Vehicle" : "Add Vehicle"}
         </Text>
       </Box>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={isEdit ? handleEditSubmit : handleSubmit}>
         <Box
           h="250px"
           bg="rgba(41, 41, 57, 0.667)"
@@ -86,7 +123,7 @@ export const AddVehicle = () => {
                 color="white"
                 colorScheme="black"
                 rounded="sm"
-                value={vehicleData.scenario}
+                value={formData.scenario}
                 name="scenario"
                 onChange={handleChange}
               >
@@ -113,7 +150,7 @@ export const AddVehicle = () => {
                 color="white"
                 pl="30px"
                 name="name"
-                value={vehicleData.name}
+                value={formData.name}
                 onChange={handleChange}
               />
             </GridItem>
@@ -126,7 +163,7 @@ export const AddVehicle = () => {
                 color="white"
                 pl="30px"
                 name="speed"
-                value={vehicleData.speed}
+                value={formData.speed}
                 onChange={handleChange}
               />
             </GridItem>
@@ -139,7 +176,7 @@ export const AddVehicle = () => {
                 color="white"
                 pl="30px"
                 name="positionX"
-                value={vehicleData.positionX}
+                value={formData.positionX}
                 onChange={handleChange}
               />
             </GridItem>
@@ -152,7 +189,7 @@ export const AddVehicle = () => {
                 color="white"
                 pl="30px"
                 name="positionY"
-                value={vehicleData.positionY}
+                value={formData.positionY}
                 onChange={handleChange}
               />
             </GridItem>
@@ -163,7 +200,7 @@ export const AddVehicle = () => {
                 colorScheme="black"
                 rounded="sm"
                 name="direction"
-                value={vehicleData.direction}
+                value={formData.direction}
                 onChange={handleChange}
               >
                 {directions.map((direction, i) => (
@@ -180,7 +217,7 @@ export const AddVehicle = () => {
           </Grid>
         </Box>
         <Box mt="10">
-          <GreenButton text="Add" type="submit" />
+          <GreenButton text={isEdit ? "Update" : "Add"} type="submit" />
           <OrangeButton text="Reset" click={handleReset} />
           <BlueButton text="Go Back" />
         </Box>
