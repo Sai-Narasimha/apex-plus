@@ -27,7 +27,7 @@ export const AddScenario = () => {
   // save the data to local storage on submitting the form
   const handleSubmit = (e) => {
     e.preventDefault();
-    SaveData("formData", { ...formData, id: uuidv4() }); //saving to local storage by adding an id
+    SaveData("scenarioData", { ...formData, id: uuidv4() }); //saving to local storage by adding an id
     alert("scenario added"); // alert message for the user
     setFormData({ name: "", time: "" }); //resetting the form data
   };

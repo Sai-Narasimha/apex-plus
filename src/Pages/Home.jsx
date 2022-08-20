@@ -74,7 +74,7 @@ export const Home = () => {
     setAllVehicleData(getAllVehicles());
     let allScenarios = getAllScenarios();
     setAllScenariosData(allScenarios);
-    setSelectedScenario(allScenarios[0]?.id);
+    setSelectedScenario(allScenarios?.[0]?.id);
   }, []);
 
   React.useEffect(() => {
@@ -189,7 +189,7 @@ export const Home = () => {
         <div>
           {array2D?.map((row, idx) => {
             return (
-              <Flex>
+              <Flex key={idx}>
                 {row.map((ele, ind) => {
                   return (
                     <Box
