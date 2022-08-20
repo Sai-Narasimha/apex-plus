@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import {Router, useLocation} from 'react-router-dom'
 import "../App.css";
 
 const links = [
@@ -12,6 +12,16 @@ const links = [
 
 export const SideBar = () => {
   const [isActive, setIsActive] = useState(0);
+  const location = useLocation();
+
+  useEffect(()=>{
+    if(location.pathname.includes("/all-scenarios")) setIsActive(1);
+    else if(location.pathname.includes("/add-scenario")) setIsActive(2);
+    else if(location.pathname.includes("/add-vehicle")) setIsActive(3);
+    else setIsActive(0);
+
+    return; 
+  },[])
 
   return (
     <div className="sidebar_wrapper">
